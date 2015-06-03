@@ -60,3 +60,9 @@ register_deactivation_hook( __FILE__, 'shipyard_instagram_deactivation' );
 Shipyard_Instagram_Post_Type::get();
 Shipyard_Instagram_Import_Images::get();
 Shipyard_Instagram_Options_Page::get();
+
+
+// API
+function shipyard_instagram_render_images( $num_images = 9 ) {
+    Shipyard_Instagram_Display_Images::get()->render_images( $num_images );
+}
