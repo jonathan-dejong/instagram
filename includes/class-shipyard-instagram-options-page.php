@@ -53,7 +53,7 @@ final class Shipyard_Instagram_Options_Page {
      */
     public function get_setting( $key ) {
         $settings = (array) get_option( $this->option_key );
-        if ( isset( $settings[ $key ] ) ) {
+        if ( array_key_exists( $key, $settings ) ) {
             return $settings[ $key ];
         }
 
@@ -61,8 +61,12 @@ final class Shipyard_Instagram_Options_Page {
     }
 
 
+    /**
+     * Add an admin notice if the plugin hasn't been configured.
+     */
     public function maybe_add_admin_notice() {
-        if ( empty( $this->get_setting( 'hashtag' ) ) ) : ?>
+        $hashtag = $this->get_setting( 'hashtag' );
+        if ( empty( $hashtag ) ) : ?>
             <div class="update-nag"><p><?php
                 printf(
                     __( 'The Instagram pluing %sneeds to be configured%s!', 'shipyard-instagram' ),
@@ -90,10 +94,10 @@ final class Shipyard_Instagram_Options_Page {
         add_settings_section( 'section-one', __( 'Configure Settings', 'shipyard-instagram' ), array( $this, 'section_one_callback' ), 'shipyard-instagram' );
         add_settings_field( 'field-one', __( 'Title', 'shipyard-instagram' ), array( $this, 'field_one_callback' ), 'shipyard-instagram', 'section-one' );
         add_settings_field( 'field-two', __( 'Hashtag', 'shipyard-instagram' ), array( $this, 'field_two_callback' ), 'shipyard-instagram', 'section-one' );
+        add_settings_field( 'field-three', __( 'Client key', 'shipyard-instagram' ), array( $this, 'field_three_callback' ), 'shipyard-instagram', 'section-one' );
     }
 
-    public function section_one_callback() {
-    }
+    public function section_one_callback() {}
 
     public function field_one_callback() { ?>
         <input type="text" class="regular-text" name="<?php echo $this->option_key; ?>[title]" value="<?php echo $this->get_setting( 'title' ); ?>">
@@ -101,6 +105,10 @@ final class Shipyard_Instagram_Options_Page {
 
     public function field_two_callback() { ?>
         <input type="text" class="regular-text" name="<?php echo $this->option_key; ?>[hashtag]" value="<?php echo $this->get_setting( 'hashtag' ); ?>">
+    <?php }
+
+    public function field_three_callback() { ?>
+        <input type="text" class="regular-text" name="<?php echo $this->option_key; ?>[client_id]" value="<?php echo $this->get_setting( 'client_id' ); ?>">
     <?php }
 
 

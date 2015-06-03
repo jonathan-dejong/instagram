@@ -9,11 +9,6 @@ final class Shipyard_Instagram_Import_Images {
 
 
     /**
-     * @var string Instragram Client ID.
-     */
-    protected $client_id = 'fddbfd43a3d443179c856d42dd1691e3';
-
-    /**
      * @var string URL to the Instagram API.
      */
     protected $api_url = 'https://api.instagram.com/v1/';
@@ -47,12 +42,13 @@ final class Shipyard_Instagram_Import_Images {
      * to the site.
      */
     public function update_instagram_feed() {
-        $hashtag = Shipyard_Instagram_Options_Page::get()->get_setting( 'hashtag' );
-        if ( empty( $hashtag ) ) {
+        $hashtag   = Shipyard_Instagram_Options_Page::get()->get_setting( 'hashtag' );
+        $client_id = Shipyard_Instagram_Options_Page::get()->get_setting( 'client_id' );
+        if ( empty( $hashtag ) || empty( $client_id ) ) {
             return;
         }
 
-        $feed_items = $this->get_instagram_feed( $hashtag );
+        $feed_items = $this->get_instagram_feed( $client_id, $hashtag );
         if ( false === $feed_items || empty( $feed_items ) ) {
             return;
         }
@@ -67,12 +63,13 @@ final class Shipyard_Instagram_Import_Images {
      * Make an API call to Instagram to get images tagged
      * with a specific hash tag.
      *
-     * @param string $hash_tag The Hash tag to search for.
+     * @param string $client_id Instagram client API id.
+     * @param string $hash_tag  The Hash tag to search for.
      *
      * @return mixed false on failure or an array of images.
      */
-    private function get_instagram_feed( $hash_tag ) {
-        $url = esc_url( $this->api_url . 'tags/' . $hash_tag . '/media/recent/?client_id=' . $this->client_id );
+    private function get_instagram_feed( $client_id, $hash_tag ) {
+        $url = esc_url( $this->api_url . 'tags/' . $hash_tag . '/media/recent/?client_id=' . $client_id );
 
         $request = wp_remote_get( $url );
         if ( is_wp_error( $request ) ) {
