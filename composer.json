@@ -2,7 +2,7 @@
   "name": "barncancerfonden/shipyard-instagram",
   "description": "Instagram plugin for Barncancerfonden",
   "keywords": ["wordpress", "shipyard"],
-  "homepage": "http://theshipyard.se",
+  "homepage": "https://theshipyard.se",
   "license": "MIT",
   "version": "0.1",
   "authors": [
@@ -10,7 +10,7 @@
       "name": "Richard Sweeney",
       "email": "richards@theshipyard.se",
       "homepage": "http://theshipyard.se"
-    },
+    }
   ],
   "type": "wordpress-plugin",
   "require": {
