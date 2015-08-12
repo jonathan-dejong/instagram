@@ -69,7 +69,7 @@ final class Shipyard_Instagram_Options_Page {
         if ( empty( $hashtag ) ) : ?>
             <div class="update-nag"><p><?php
                 printf(
-                    __( 'The Instagram pluing %sneeds to be configured%s!', 'shipyard-instagram' ),
+                    __( 'The Instagram plugin %sneeds to be configured%s!', 'shipyard-instagram' ),
                     '<a href="' . admin_url( 'options-general.php?page=shipyard-instagram' ) . '">',
                     '</a>'
                 ); ?>

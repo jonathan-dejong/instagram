@@ -1,14 +1,17 @@
 <?php
 /*
 Plugin Name: Shipyard Instagram
-Version: 0.1-alpha
-Description: PLUGIN DESCRIPTION HERE
-Author: YOUR NAME HERE
-Author URI: YOUR SITE HERE
-Plugin URI: PLUGIN SITE HERE
+Version: 0.1
+Description: Instagram Plugin for Barncancerfonden
+Author: The Shipyard crew
+Author URI: https://theshipyard.se
 Text Domain: shipyard-instagram
 Domain Path: /languages
 */
+
+
+// load translations
+load_plugin_textdomain( 'shipyard-instagram', false, dirname( plugin_basename(__FILE__) ) . '/languages/' );
 
 
 /**
@@ -47,12 +50,14 @@ add_filter( 'cron_schedules', 'shipyard_instagram_add_cron_schedules' );
 
 function shipyard_instagram_activation() {
     wp_schedule_event( current_time( 'timestamp' ), 'fifteen_minutes', 'update_instagram_feed' );
+    wp_schedule_event( current_time( 'timestamp' ), 'daily', 'delete_old_instragram_posts' );
 }
 register_activation_hook( __FILE__, 'shipyard_instagram_activation' );
 
 
 function shipyard_instagram_deactivation() {
     wp_clear_scheduled_hook( 'update_instagram_feed' );
+    wp_clear_scheduled_hook( 'delete_old_instragram_posts' );
 }
 register_deactivation_hook( __FILE__, 'shipyard_instagram_deactivation' );
 

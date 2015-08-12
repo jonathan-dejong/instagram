@@ -33,7 +33,7 @@ final class Shipyard_Instagram_Import_Images {
      */
     private function __construct() {
         add_action( 'update_instagram_feed', array( $this, 'update_instagram_feed' ) );
-        // add_action( 'init', array( $this, 'update_instagram_feed' ) );
+        add_action( 'delete_old_instragram_posts', array( $this, 'delete_old_instragram_posts' ) );
     }
 
 
@@ -68,7 +68,7 @@ final class Shipyard_Instagram_Import_Images {
      *
      * @return mixed false on failure or an array of images.
      */
-    private function get_instagram_feed( $client_id, $hash_tag ) {
+    public function get_instagram_feed( $client_id, $hash_tag ) {
         $url = esc_url( $this->api_url . 'tags/' . $hash_tag . '/media/recent/?client_id=' . $client_id );
 
         $request = wp_remote_get( $url );
@@ -92,7 +92,7 @@ final class Shipyard_Instagram_Import_Images {
      *
      * @param object $media_object Instagram media object
      */
-    private function maybe_add_instgram_post( $media_object ) {
+    public function maybe_add_instgram_post( $media_object ) {
         $post_exists = $this->check_if_post_exists( $media_object->id );
         if ( true === $post_exists ) {
             return;
@@ -108,12 +108,14 @@ final class Shipyard_Instagram_Import_Images {
         ) );
 
         if ( ! $post_id || is_wp_error( $post_id ) ) {
-            return;
+            return false;
         }
 
         update_post_meta( $post_id, '_instagram_id',     $media_object->id );
         update_post_meta( $post_id, '_instagram_images', $media_object->images );
         update_post_meta( $post_id, '_instagram_type',   $media_object->type );
+
+        return $post_id;
     }
 
 
@@ -123,8 +125,10 @@ final class Shipyard_Instagram_Import_Images {
      * This is just a duplicate check.
      *
      * @param string $instagram_id Instragram Media ID.
+     *
+     * @return bool True if post exists, false if not.
      */
-    private function check_if_post_exists( $instagram_id ) {
+    public function check_if_post_exists( $instagram_id ) {
         $query = new WP_Query( array(
             'post_type'              => Shipyard_Instagram_Post_Type::get()->post_type,
             'no_found_rows'          => true,
@@ -136,6 +140,31 @@ final class Shipyard_Instagram_Import_Images {
         ) );
 
         return $query->have_posts();
+    }
+
+
+    /**
+     * Delete instagram when there are more than 100.
+     *
+     * Otherwise images will just keep piling in and fill
+     * up the database for no good reason.
+     */
+    public function delete_old_instragram_posts() {
+        $max_num_posts = 100;
+        $images = new WP_Query( array(
+            'post_type'              => Shipyard_Instagram_Post_Type::get()->post_type,
+            'posts_per_page'         => 500,
+            'update_post_meta_cache' => false,
+            'update_post_term_cache' => false,
+        ) );
+
+        if ( $images->found_posts > $max_num_posts ) {
+            array_splice( $images->posts, 0, $max_num_posts );
+
+            foreach ( $images->posts as $image ) {
+                wp_delete_post( $image->ID, false );
+            }
+        }
     }
 
 
