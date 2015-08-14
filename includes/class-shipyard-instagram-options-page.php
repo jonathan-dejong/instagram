@@ -129,8 +129,8 @@ final class Shipyard_Instagram_Options_Page {
                 <?php submit_button(); ?>
             </form>
 
-            <h3><?php _e( 'Fetch images', 'shipyard-instagram' ); ?></h3>
-            <p class="description"><?php _e( 'Click the button below to check for new images in the feed.', 'shipyard-instagram' ); ?></p>
+            <h3><?php _e( 'Fetch new images', 'shipyard-instagram' ); ?></h3>
+            <p class="description"><?php _e( 'Click the button below to check for new images in the feed. NB. The feed will automatically update every 15 minutes.', 'shipyard-instagram' ); ?></p>
             <form action="<?php echo esc_url( $action ); ?>" method="POST">
                 <input type="hidden" name="update_feed" value="1">
                 <?php submit_button( __( 'Fetch feed', 'shipyard-instagram' ), 'secondary', 'ship_get_instagram_feed' ); ?>
