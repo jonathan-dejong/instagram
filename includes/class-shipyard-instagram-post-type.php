@@ -210,7 +210,7 @@ final class Shipyard_Instagram_Post_Type {
     public function hide_add_new_button() {
         if ( ( isset( $_GET['post_type'] ) && $_GET['post_type'] == $this->post_type ) || get_post_type() === $this->post_type ) { ?>
             <style type="text/css">
-                #favorite-actions, .add-new-h2, .tablenav,
+                #favorite-actions, .add-new-h2,
                 .row-actions .trash,
                 #delete-action {
                     display:none;
