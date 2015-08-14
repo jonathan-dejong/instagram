@@ -112,14 +112,30 @@ final class Shipyard_Instagram_Options_Page {
     <?php }
 
 
-    public function render_options_page() { ?>
+    public function render_options_page() {
+        if ( isset( $_GET['update_feed'] ) && isset( $_POST['update_feed'] ) ) {
+            Shipyard_Instagram_Import_Images::get()->update_instagram_feed();
+            echo '<div id="setting-error-settings_updated" class="updated settings-error notice is-dismissible"><p><strong>'. __( 'Feed updated', 'shipyard-instagram' ) . '</strong></p></div>';
+        }
+
+        $action = add_query_arg( array( 'update_feed' => 1, 'page' => 'shipyard-instagram' ), get_home_url() . $_SERVER['REQUEST_URI'] ); ?>
+
         <div class="wrap">
+
             <h2><?php _e( 'Shipyard Instagram', 'shipyard-instagram' ); ?></h2>
             <form action="options.php" method="POST">
                 <?php settings_fields( $this->setting ); ?>
                 <?php do_settings_sections( 'shipyard-instagram' ); ?>
                 <?php submit_button(); ?>
             </form>
+
+            <h3><?php _e( 'Fetch images', 'shipyard-instagram' ); ?></h3>
+            <p class="description"><?php _e( 'Click the button below to check for new images in the feed.', 'shipyard-instagram' ); ?></p>
+            <form action="<?php echo esc_url( $action ); ?>" method="POST">
+                <input type="hidden" name="update_feed" value="1">
+                <?php submit_button( __( 'Fetch feed', 'shipyard-instagram' ), 'secondary', 'ship_get_instagram_feed' ); ?>
+            </form>
+
         </div>
     <?php }
 
