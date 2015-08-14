@@ -42,8 +42,12 @@ final class Shipyard_Instagram_Post_Type {
     private function __construct() {
         add_action( 'init', array( $this, 'register_post_type' ) );
         add_action( 'init', array( $this, 'register_taxonomy' ) );
+
         add_action( 'add_meta_boxes', array( $this, 'add_image_meta_box' ) );
         add_action( 'add_meta_boxes', array( $this, 'add_tax_meta_box' ) );
+        add_action( 'admin_menu', array( $this, 'disable_links_to_new_posts' ) );
+        add_action( 'admin_head', array( $this, 'hide_add_new_button' ) );
+
         add_filter( "manage_edit-{$this->post_type}_columns", array( $this, 'add_custom_column' ) );
         add_action( "manage_{$this->post_type}_posts_custom_column", array( $this, 'add_custom_column_image' ), 10, 2 );
         add_action( "save_post_{$this->post_type}", array( $this, 'save_post_tax' ) );
@@ -187,8 +191,33 @@ final class Shipyard_Instagram_Post_Type {
     public function render_instagram_image() {
         $image = get_post_meta( get_the_ID(), '_instagram_images', true ); ?>
 
-        <img src="<?php echo esc_attr( $image->low_resolution->url ); ?>">
+        <a target="_blank" href="<?php echo esc_url( get_the_guid( get_the_ID() ) ); ?>"><img src="<?php echo esc_attr( $image->low_resolution->url ); ?>"></a>
     <?php }
+
+
+    /**
+     * Disable the menu item linking to 'add new' for Instagram posts.
+     */
+    public function disable_links_to_new_posts() {
+        global $submenu;
+        unset( $submenu["edit.php?post_type={$this->post_type}"][10] );
+    }
+
+
+    /**
+     * Hide the 'Add new' button with CSS.
+     */
+    public function hide_add_new_button() {
+        if ( ( isset( $_GET['post_type'] ) && $_GET['post_type'] == $this->post_type ) || get_post_type() === $this->post_type ) { ?>
+            <style type="text/css">
+                #favorite-actions, .add-new-h2, .tablenav,
+                .row-actions .trash,
+                #delete-action {
+                    display:none;
+                }
+            </style>
+        <?php }
+    }
 
 
     /**
